@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lotus Açaí — Açaí na Garrafa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lilac: #D87BDB; --lilac-light: #E8A0EC; --lilac-pale: #F0C8F4;
+      --purple-dark: #6B1F7A; --purple-deep: #4A1259;
+      --beige: #C8A882; --beige-light: #DEC9A8; --beige-pale: #F0E0C8;
+      --cream: #FDF6EE; --white: #FFFFFF;
+      --text-dark: #2A1030; --text-mid: #5A3060;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--cream); overflow-x: hidden; cursor: none; }
+
+    /* CURSOR */
+    #cursor { position: fixed; width: 14px; height: 14px; background: var(--purple-dark); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s, background .25s; mix-blend-mode: multiply; }
+    #cursor.big { width: 50px; height: 50px; background: var(--lilac); opacity: .6; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 14px 60px; background: rgba(253,246,238,.9); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(216,123,219,.15); transition: box-shadow .3s, padding .3s; }
+    nav.scrolled { box-shadow: 0 4px 30px rgba(107,31,122,.12); padding: 10px 60px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 40px; width: 40px; object-fit: contain; border-radius: 50%; background: var(--purple-dark); padding: 5px; transition: transform .3s; }
+    .nav-logo:hover img { transform: rotate(15deg) scale(1.08); }
+    .nav-logo span { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--purple-dark); letter-spacing: .04em; }
+    .nav-links { display: flex; gap: 34px; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: .82rem; font-weight: 500; color: var(--text-mid); letter-spacing: .1em; text-transform: uppercase; position: relative; transition: color .3s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; right: 100%; height: 2px; background: var(--lilac); transition: right .3s; }
+    .nav-links a:hover { color: var(--purple-dark); }
+    .nav-links a:hover::after { right: 0; }
+    .btn-pedir-nav { background: var(--purple-dark); color: var(--white); border: none; padding: 11px 26px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: none; text-decoration: none; transition: background .3s, transform .2s, box-shadow .3s; }
+    .btn-pedir-nav:hover { background: var(--purple-deep); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(107,31,122,.35); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--purple-dark); border-radius: 2px; transition: transform .3s; }
+
+    /* HERO */
+    #hero { min-height: 100vh; background: var(--lilac); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 120px 60px 80px; position: relative; overflow: hidden; }
+    .hero-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .28; pointer-events: none; }
+    .hero-blob.b1 { width: 500px; height: 500px; background: var(--purple-dark); top: -100px; left: -80px; }
+    .hero-blob.b2 { width: 350px; height: 350px; background: var(--lilac-pale); bottom: 0; left: 38%; }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-tag { display: inline-block; background: rgba(255,255,255,.25); color: var(--white); font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; padding: 7px 18px; border-radius: 100px; margin-bottom: 28px; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.4); opacity: 0; transform: translateY(20px); animation: fadeUp .8s .2s forwards; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900; line-height: 1.0; color: var(--white); opacity: 0; transform: translateY(30px); animation: fadeUp .9s .4s forwards; }
+    .hero-title em { font-style: italic; color: var(--purple-deep); text-shadow: 0 2px 20px rgba(74,18,89,.3); }
+    .hero-sub { margin-top: 20px; font-size: 1.05rem; color: rgba(255,255,255,.85); max-width: 400px; line-height: 1.7; opacity: 0; transform: translateY(20px); animation: fadeUp .9s .6s forwards; }
+    .hero-actions { display: flex; gap: 16px; margin-top: 40px; opacity: 0; transform: translateY(20px); animation: fadeUp .9s .8s forwards; }
+    .btn-primary { background: var(--purple-deep); color: var(--white); padding: 16px 36px; border-radius: 100px; font-weight: 700; font-size: .95rem; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; border: none; cursor: none; position: relative; overflow: hidden; transition: transform .25s, box-shadow .3s; box-shadow: 0 6px 25px rgba(74,18,89,.4); }
+    .btn-primary::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,.15); transform: translateX(-100%) skewX(-20deg); transition: transform .4s; }
+    .btn-primary:hover::before { transform: translateX(200%) skewX(-20deg); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(74,18,89,.5); }
+    .btn-outline { background: transparent; color: var(--white); padding: 16px 36px; border-radius: 100px; font-weight: 600; font-size: .95rem; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; border: 2px solid rgba(255,255,255,.6); cursor: none; transition: background .3s, transform .25s; }
+    .btn-outline:hover { background: rgba(255,255,255,.15); transform: translateY(-3px); }
+    .hero-visual { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; opacity: 0; transform: translateX(40px) scale(.95); animation: slideIn .9s .5s forwards; }
+    .hero-img-wrap { position: relative; }
+    .hero-bottle { width: 300px; height: 520px; object-fit: contain; border-radius: 0; filter: drop-shadow(0 30px 60px rgba(74,18,89,.5)); animation: float 4s ease-in-out infinite; }
+    .hero-badge { position: absolute; bottom: 20px; right: -36px; background: var(--white); border-radius: 20px; padding: 14px 20px; box-shadow: 0 10px 40px rgba(107,31,122,.25); display: flex; align-items: center; gap: 12px; animation: float 4s 1s ease-in-out infinite; }
+    .hero-badge img { width: 38px; height: 38px; border-radius: 50%; background: var(--purple-dark); padding: 5px; object-fit: contain; }
+    .hero-badge .badge-text { font-size: .75rem; font-weight: 600; color: var(--text-mid); line-height: 1.4; }
+    .hero-badge .badge-text strong { display: block; font-size: 1rem; color: var(--purple-dark); }
+    .scroll-ind { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,255,255,.7); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; z-index: 2; animation: fadeUp 1s 1.2s forwards; opacity: 0; }
+    .scroll-ind .arrow { animation: bounce 1.4s ease-in-out infinite; font-size: 1.2rem; }
+
+    /* HISTORIA */
+    #historia { background: var(--beige-light); padding: 120px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; overflow: hidden; }
+    #historia::before { content: ''; position: absolute; top: -60px; right: -60px; width: 210px; height: 210px; border: 55px solid var(--beige-pale); border-radius: 50%; opacity: .5; }
+    .section-label { font-size: .75rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--purple-dark); margin-bottom: 14px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.15; color: var(--text-dark); margin-bottom: 28px; }
+    .section-title em { font-style: italic; color: var(--purple-dark); }
+    .section-body { font-size: 1rem; line-height: 1.85; color: var(--text-mid); }
+    .section-body p + p { margin-top: 16px; }
+    .img-frame { position: relative; }
+    .img-frame img { width: 100%; border-radius: 24px; box-shadow: 0 20px 60px rgba(107,31,122,.2); object-fit: cover; height: 460px; display: block; transform: rotate(2deg); transition: transform .5s; }
+    .img-frame:hover img { transform: rotate(0deg) scale(1.02); }
+    .img-frame::after { content: ''; position: absolute; inset: -12px; border: 3px solid var(--lilac); border-radius: 28px; z-index: -1; transform: rotate(-2deg); transition: transform .5s; }
+    .img-frame:hover::after { transform: rotate(0deg); }
+
+    /* PORQUE */
+    #porque { background: var(--lilac-pale); padding: 120px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .porque-img { position: relative; order: -1; }
+    .porque-img img { width: 100%; border-radius: 24px; box-shadow: 0 20px 60px rgba(107,31,122,.2); object-fit: cover; height: 500px; display: block; }
+    .porque-badge { position: absolute; top: 24px; right: -16px; background: var(--purple-dark); color: var(--white); border-radius: 16px; padding: 14px 18px; font-size: .78rem; font-weight: 600; letter-spacing: .04em; text-align: center; box-shadow: 0 8px 28px rgba(74,18,89,.4); animation: float 3.5s ease-in-out infinite; }
+    .porque-badge strong { display: block; font-size: 1.3rem; margin-bottom: 2px; }
+    .porque-card { background: var(--white); border-radius: 20px; padding: 22px 26px; margin-bottom: 16px; display: flex; gap: 18px; align-items: flex-start; box-shadow: 0 4px 20px rgba(107,31,122,.08); transform: translateX(30px); opacity: 0; transition: transform .5s, opacity .5s, box-shadow .3s; }
+    .porque-card.visible { transform: translateX(0); opacity: 1; }
+    .porque-card:hover { box-shadow: 0 10px 40px rgba(107,31,122,.18); }
+    .card-icon { width: 46px; height: 46px; border-radius: 14px; background: var(--lilac); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .card-body h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--purple-dark); margin-bottom: 6px; }
+    .card-body p { font-size: .9rem; line-height: 1.65; color: var(--text-mid); }
+
+    /* CARDAPIO */
+    #cardapio { background: var(--beige-pale); padding: 120px 60px; text-align: center; position: relative; overflow: hidden; }
+    #cardapio .section-label, #cardapio .section-title { text-align: center; }
+    #cardapio .section-title { margin-bottom: 20px; }
+    #cardapio .section-body { max-width: 600px; margin: 0 auto 50px; text-align: center; }
+    .cardapio-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--purple-dark); color: var(--white); padding: 18px 48px; border-radius: 100px; font-weight: 700; font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transition: background .3s, transform .25s, box-shadow .3s; box-shadow: 0 8px 30px rgba(107,31,122,.3); }
+    .cardapio-btn:hover { background: var(--purple-deep); transform: translateY(-4px); box-shadow: 0 16px 45px rgba(107,31,122,.45); }
+    .cardapio-btn .ar { width: 28px; height: 28px; background: rgba(255,255,255,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform .3s; }
+    .cardapio-btn:hover .ar { transform: translateX(4px); }
+    .cdecor { position: absolute; font-size: 120px; opacity: .07; pointer-events: none; }
+    .cdecor.d1 { bottom: -20px; left: 40px; transform: rotate(-15deg); }
+    .cdecor.d2 { top: 40px; right: 60px; transform: rotate(20deg); }
+
+    /* GALERIA */
+    #galeria { background: var(--cream); padding: 120px 60px; }
+    #galeria .section-label, #galeria .section-title { text-align: center; }
+    #galeria .section-title { margin-bottom: 50px; }
+    .galeria-grid { display: grid; grid-template-columns: repeat(12,1fr); grid-template-rows: 300px 260px; gap: 14px; }
+    .g-item { border-radius: 20px; overflow: hidden; position: relative; cursor: none; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+    .g-item:hover img { transform: scale(1.08); }
+    .g-item:nth-child(1) { grid-column: 1/6; grid-row: 1; }
+    .g-item:nth-child(2) { grid-column: 6/9; grid-row: 1; }
+    .g-item:nth-child(3) { grid-column: 9/13; grid-row: 1; }
+    .g-item:nth-child(4) { grid-column: 1/5; grid-row: 2; }
+    .g-item:nth-child(5) { grid-column: 5/9; grid-row: 2; }
+    .g-item:nth-child(6) { grid-column: 9/13; grid-row: 2; }
+    .g-overlay { position: absolute; inset: 0; background: rgba(74,18,89,.55); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .35s; }
+    .g-overlay svg { width: 36px; height: 36px; fill: white; }
+    .g-item:hover .g-overlay { opacity: 1; }
+
+    /* CONTATOS */
+    #contatos { background: var(--purple-dark); padding: 100px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .contatos-content .section-label { color: var(--lilac-pale); }
+    .contatos-content .section-title { color: var(--white); }
+    .contatos-content .section-body { color: rgba(255,255,255,.75); }
+    .contact-cards { display: flex; flex-direction: column; gap: 18px; margin-top: 40px; }
+    .contact-card { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,.1); border-radius: 20px; padding: 22px 28px; border: 1px solid rgba(255,255,255,.15); text-decoration: none; backdrop-filter: blur(8px); transition: background .3s, transform .3s, box-shadow .3s; }
+    .contact-card:hover { background: rgba(255,255,255,.2); transform: translateX(8px); box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+    .cc-icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .contact-card.wpp .cc-icon { background: #25D366; }
+    .contact-card.ig .cc-icon { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+    .cc-label { font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 4px; }
+    .cc-value { font-size: 1.1rem; font-weight: 600; color: var(--white); }
+    .contatos-photo { position: relative; }
+    .contatos-photo img { width: 100%; border-radius: 28px; object-fit: cover; height: 460px; display: block; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+    .photo-badge { position: absolute; bottom: 24px; left: -16px; background: var(--white); border-radius: 18px; padding: 14px 20px; box-shadow: 0 10px 35px rgba(0,0,0,.25); display: flex; align-items: center; gap: 12px; animation: float 3s ease-in-out infinite; }
+    .photo-badge img { width: 36px; height: 36px; border-radius: 50%; background: var(--purple-dark); padding: 5px; object-fit: contain; }
+    .pb-txt { font-size: .78rem; font-weight: 600; color: var(--text-mid); line-height: 1.4; }
+    .pb-txt strong { display: block; color: var(--purple-dark); font-size: .92rem; }
+
+    /* FOOTER */
+    footer { background: var(--purple-deep); padding: 36px 60px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.1); }
+    .footer-logo { display: flex; align-items: center; gap: 10px; }
+    .footer-logo img { height: 50px; width: 50px; object-fit: contain; border-radius: 50%; background: rgba(255,255,255,.15); padding: 4px; }
+    .footer-logo span { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--white); letter-spacing: .04em; }
+    .footer-copy { font-size: .82rem; color: rgba(255,255,255,.4); }
+    .footer-heart { color: var(--lilac); }
+
+    /* FLOAT BTN */
+    .float-btn { position: fixed; bottom: 30px; right: 30px; z-index: 200; display: flex; align-items: center; gap: 10px; background: #25D366; color: var(--white); padding: 14px 24px; border-radius: 100px; font-weight: 700; font-size: .9rem; box-shadow: 0 8px 30px rgba(37,211,102,.4); text-decoration: none; cursor: none; transform: translateY(80px); opacity: 0; transition: transform .4s, opacity .4s, box-shadow .3s; }
+    .float-btn.show { transform: translateY(0); opacity: 1; }
+    .float-btn:hover { box-shadow: 0 14px 40px rgba(37,211,102,.55); transform: translateY(-3px); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { to { opacity: 1; transform: translateX(0) scale(1); } }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity .7s, transform .7s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      nav { padding: 14px 20px; }
+      nav.scrolled { padding: 10px 20px; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--cream); padding: 24px; gap: 20px; box-shadow: 0 10px 30px rgba(107,31,122,.1); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .btn-pedir-nav { display: none; }
+      #hero { grid-template-columns: 1fr; padding: 100px 20px 60px; gap: 30px; }
+      .hero-visual { order: -1; }
+      .hero-bottle { width: 100%; max-width: 240px; height: 380px; margin: 0 auto; display: block; }
+      .hero-badge { right: 0; }
+      #historia, #porque, #contatos { grid-template-columns: 1fr; padding: 80px 20px; gap: 40px; }
+      .porque-img { order: 0; }
+      .porque-badge { right: 0; }
+      .img-frame img, .porque-img img, .contatos-photo img { height: 300px; }
+      .photo-badge { left: 0; }
+      #cardapio, #galeria { padding: 80px 20px; }
+      .galeria-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3,190px); }
+      .g-item:nth-child(1) { grid-column: 1/3; grid-row: 1; }
+      .g-item:nth-child(2) { grid-column: 1; grid-row: 2; }
+      .g-item:nth-child(3) { grid-column: 2; grid-row: 2; }
+      .g-item:nth-child(4) { grid-column: 1; grid-row: 3; }
+      .g-item:nth-child(5) { grid-column: 2; grid-row: 3; }
+      .g-item:nth-child(6) { display: none; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 28px 20px; }
+      body { cursor: auto; }
+      #cursor { display: none; }
+      .pb-txt { font-size: .78rem; font-weight: 600; color: var(--text-mid); line-height: 1.4; }
+      .pb-txt strong { display: block; color: var(--purple-dark); font-size: .92rem; }
+    }
+    /* LIGHTBOX */
+    .lightbox-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,0,18,.93);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .lightbox-overlay.open { opacity: 1; pointer-events: all; }
+    .lightbox-img {
+      max-width: 90vw; max-height: 86vh;
+      border-radius: 12px; object-fit: contain; display: block;
+      box-shadow: 0 20px 80px rgba(0,0,0,.6);
+      transition: opacity .15s;
+    }
+    .lightbox-img.fade { opacity: 0; }
+    .lb-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.4);
+      color: #fff; font-size: 1.3rem; cursor: pointer; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-prev { left: 12px; }
+    .lb-next { right: 12px; }
+    .lb-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 40px; height: 40px; border-radius: 50%; z-index: 2;
+      background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.4);
+      color: #fff; font-size: .95rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-counter {
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,.5); font-size: .78rem; letter-spacing: .1em;
+    }
+    .g-overlay { pointer-events: none; }
+    .g-item { cursor: pointer !important; }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- FLOAT WPP -->
+<a id="floatBtn" href="https://wa.me/5575981700679?text=Olá!%20Quero%20fazer%20um%20pedido%20!" target="_blank" class="float-btn">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  Fazer Pedido
+</a>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <img src="imagens/logo.png" alt="Lotus Açaí" />
+    <span>LOTUS AÇAÍ</span>
+  </a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#historia">Nossa História</a></li>
+    <li><a href="#porque">Por que nós</a></li>
+    <li><a href="#cardapio">Cardápio</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#contatos">Contatos</a></li>
+  </ul>
+  <a href="#cardapio" class="btn-pedir-nav">Pedir Agora</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blob b1"></div>
+  <div class="hero-blob b2"></div>
+  <div class="hero-content">
+    <div class="hero-tag"> Puro · Cremoso · Gelado</div>
+    <h1 class="hero-title">Vai um<br><em>Açaí na</em><br>Garrafa?</h1>
+    <p class="hero-sub">Cada garrafa preparada com carinho — do jeitinho que você ama, gelada, cremosa e caprichada de verdade.</p>
+    <div class="hero-actions">
+      <a href="#cardapio" class="btn-primary">Pedir Agora</a>
+      <a href="#historia" class="btn-outline">Conhecer Mais</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <img class="hero-bottle" src="imagens/1.png" alt="Açaí na Garrafa Lotus" />
+      <div class="hero-badge">
+        <img src="imagens/logo.png" alt="Lotus" />
+        <div class="badge-text"><strong>100% Natural</strong>Sem conservantes</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-ind">
+    <span>Rolar</span>
+    <span class="arrow">↓</span>
+  </div>
+</section>
+
+<!-- NOSSA HISTÓRIA -->
+<section id="historia">
+  <div>
+    <p class="section-label reveal">Nossa trajetória</p>
+    <h2 class="section-title reveal">Nossa <em>História</em></h2>
+    <div class="section-body reveal">
+      <p>Nossa história começou com uma ideia simples: levar até você um açaí de qualidade, com sabor de verdade e aquele cuidado que faz toda diferença.</p>
+      <p>Entre testes, receitas e muita dedicação, nasceu o nosso espaço — pensado para ser mais do que um lugar de pedidos, mas uma experiência.</p>
+      <p>Cada garrafa é preparada com carinho, buscando sempre o equilíbrio perfeito entre sabor, qualidade e satisfação.</p>
+      <p>Hoje, seguimos crescendo com o mesmo propósito do início: oferecer um açaí que refresca, alimenta e conquista, criando momentos especiais em cada pedido. 💜</p>
+    </div>
+  </div>
+  <div class="img-frame reveal">
+    <img src="imagens/6.png" alt="Garrafas Lotus Açaí na mesa" />
+  </div>
+</section>
+
+<!-- POR QUE LOTUS -->
+<section id="porque">
+  <div class="porque-img reveal">
+    <img src="imagens/2.png" alt="Lotus Açaí com rótulo" />
+    <div class="porque-badge"><strong>🏆</strong>Qualidade<br>Garantida</div>
+  </div>
+  <div>
+    <p class="section-label reveal">Nosso diferencial</p>
+    <h2 class="section-title reveal">Por que escolher o<br><em>Lotus Açaí?</em></h2>
+    <div id="porqueCards">
+      <div class="porque-card">
+        <div class="card-icon">🧊</div>
+        <div class="card-body"><h4>Sempre bem gelado</h4><p>Nosso açaí é daquele jeito que vicia: bem gelado, cremoso e caprichado de verdade.</p></div>
+      </div>
+      <div class="porque-card">
+        <div class="card-icon">🍫</div>
+        <div class="card-body"><h4>Recheado do seu jeito</h4><p>Curte bastante recheio? Aqui tem. Quer montar do seu jeito? Também tem!</p></div>
+      </div>
+      <div class="porque-card">
+        <div class="card-icon">✨</div>
+        <div class="card-body"><h4>Entregue com cuidado</h4><p>Você pede do seu gosto e a gente entrega do jeito certo — sempre com capricho.</p></div>
+      </div>
+      <div class="porque-card">
+        <div class="card-icon">💜</div>
+        <div class="card-body"><h4>Impossível resistir</h4><p>Porque depois do primeiro, dá vontade de pedir todo dia! 😋</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDÁPIO -->
+<section id="cardapio">
+  <span class="cdecor d1">🪷</span>
+  <span class="cdecor d2">🌿</span>
+  <p class="section-label reveal">O que temos</p>
+  <h2 class="section-title reveal">Nosso cardápio de <em>açaí</em></h2>
+  <div class="section-body reveal">
+    <p>O nosso cardápio é cheio de combinações que dão vontade de pedir mais de uma vez. Aqui você encontra açaí cremoso de verdade, diversos tamanhos, adicionais caprichados e misturas que fazem cada pedido ser único.</p>
+    <p>Desde os clássicos até os mais recheados, tudo preparado pra entregar sabor de verdade — daquele que chega gelado, bem servido e do jeito que você gosta. 💜</p>
+  </div>
+  <div class="reveal">
+    <a href="cardapio/cardapio.html" class="cardapio-btn">
+      Conhecer o Cardápio
+      <span class="ar">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+  <p class="section-label reveal">Nossos produtos</p>
+  <h2 class="section-title reveal">Galeria</h2>
+  <div class="galeria-grid reveal">
+    <div class="g-item" onclick="lbOpen(0)">
+      <img src="imagens/11.png" alt="Garrafa Lótus Açaí com rótulo" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+    <div class="g-item" onclick="lbOpen(1)">
+      <img src="imagens/7.png" alt="Açaí morango no terraço" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+    <div class="g-item" onclick="lbOpen(2)">
+      <img src="imagens/3.png" alt="Açaí roxo na mesa" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+    <div class="g-item" onclick="lbOpen(3)">
+      <img src="imagens/13.jpeg" alt="Açaí chocolate na mão" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+    <div class="g-item" onclick="lbOpen(4)">
+      <img src="imagens/14.jpeg" alt="Açaí rosa na mão" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+    <div class="g-item" onclick="lbOpen(5)">
+      <img src="imagens/15.jpeg" alt="Açaí chocolate com granola" loading="lazy" />
+      <div class="g-overlay"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATOS -->
+<section id="contatos">
+  <div class="contatos-content">
+    <p class="section-label reveal">Fale conosco</p>
+    <h2 class="section-title reveal">Entre em <em style="color:var(--lilac)">Contato</em></h2>
+    <p class="section-body reveal">Estamos prontos para receber seu pedido ou tirar qualquer dúvida. Chama a gente no WhatsApp ou nos siga no Instagram!</p>
+    <div class="contact-cards reveal">
+      <a href="https://wa.me/5575981700679?text=Olá!%20Quero%20fazer%20um%20pedido%20🍇" target="_blank" class="contact-card wpp">
+        <div class="cc-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+        <div><div class="cc-label">WhatsApp</div><div class="cc-value">(75) 98170-0679</div></div>
+      </a>
+      <a href="https://instagram.com/lotus_acaii" target="_blank" class="contact-card ig">
+        <div class="cc-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+        <div><div class="cc-label">Instagram</div><div class="cc-value">@lotus_acaii</div></div>
+      </a>
+    </div>
+  </div>
+  <div class="contatos-photo reveal">
+    <img src="imagens/10.jpeg" alt="Entrega Lotus Açaí" />
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="imagens/logo.png" alt="Lotus" />
+    <span>LOTUS AÇAÍ</span>
+  </div>
+  <div class="footer-copy">© 2025 Lotus Açaí — Feito com <span class="footer-heart">♥</span> na Bahia</div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => { cursor.style.left = e.clientX+'px'; cursor.style.top = e.clientY+'px'; });
+  document.querySelectorAll('a,button,.g-item,.porque-card,.contact-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  const navbar = document.getElementById('navbar');
+  const floatBtn = document.getElementById('floatBtn');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+    floatBtn.classList.toggle('show', window.scrollY > 400);
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const cardObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.porque-card').forEach((c,i) => setTimeout(() => c.classList.add('visible'), i*130));
+        cardObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  const pc = document.getElementById('porqueCards');
+  if (pc) cardObs.observe(pc);
+
+  const secs = document.querySelectorAll('section[id]');
+  const nas = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+    nas.forEach(a => { a.style.color = a.getAttribute('href') === '#'+cur ? 'var(--purple-dark)' : ''; });
+  });
+
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    document.querySelectorAll('.hero-blob').forEach((b,i) => { b.style.transform = `translateY(${y*(i===0?.12:-.08)}px)`; });
+  });
+</script>
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lb-close" onclick="lbClose()">&#x2715;</button>
+  <button class="lb-btn lb-prev" onclick="lbShow(lbCurrent-1)">&#8592;</button>
+  <img class="lightbox-img" id="lbImg" src="" alt=""/>
+  <button class="lb-btn lb-next" onclick="lbShow(lbCurrent+1)">&#8594;</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<script>
+  var lbSrcs = [
+    'imagens/11.png',
+    'imagens/7.png',
+    'imagens/3.png',
+    'imagens/13.jpeg',
+    'imagens/14.jpeg',
+    'imagens/15.jpeg'
+  ];
+  var lbCurrent = 0;
+
+  function lbOpen(i) {
+    lbCurrent = i;
+    document.getElementById('lbImg').src = lbSrcs[lbCurrent];
+    document.getElementById('lbCounter').textContent = (lbCurrent + 1) + ' / ' + lbSrcs.length;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function lbClose() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function lbShow(i) {
+    lbCurrent = (i + lbSrcs.length) % lbSrcs.length;
+    var img = document.getElementById('lbImg');
+    img.classList.add('fade');
+    setTimeout(function() {
+      img.src = lbSrcs[lbCurrent];
+      document.getElementById('lbCounter').textContent = (lbCurrent + 1) + ' / ' + lbSrcs.length;
+      img.classList.remove('fade');
+    }, 150);
+  }
+
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) lbClose();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'ArrowLeft')  lbShow(lbCurrent - 1);
+    if (e.key === 'ArrowRight') lbShow(lbCurrent + 1);
+    if (e.key === 'Escape')     lbClose();
+  });
+
+  var lbTX = 0;
+  document.getElementById('lightbox').addEventListener('touchstart', function(e) { lbTX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('lightbox').addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - lbTX;
+    if (Math.abs(dx) > 50) lbShow(dx < 0 ? lbCurrent + 1 : lbCurrent - 1);
+  }, { passive: true });
+</script>
+</body>
+</html>
