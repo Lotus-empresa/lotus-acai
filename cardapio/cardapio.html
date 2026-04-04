@@ -924,6 +924,11 @@ function updateCartUI() {
   const hasItems = cart.length > 0;
   document.getElementById('entregaSection').style.display = hasItems ? 'block' : 'none';
   document.getElementById('totalsSection').style.display  = hasItems ? 'block' : 'none';
+  // Garantir que entregaFields respeite o modo atual ao reexibir a seção
+  if (hasItems) {
+    document.getElementById('entregaFields').style.display = modoEntrega === 'retirada' ? 'none' : 'block';
+    document.getElementById('retiradaInfo').classList.toggle('show', modoEntrega === 'retirada');
+  }
 
   const subtotal   = cart.reduce((s, i) => s + i.totalPrice, 0);
   const grandTotal = subtotal + freteValor;
