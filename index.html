@@ -167,37 +167,215 @@
     .reveal { opacity: 0; transform: translateY(40px); transition: opacity .7s, transform .7s; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* MOBILE */
-    @media (max-width: 900px) {
-      nav { padding: 14px 20px; }
-      nav.scrolled { padding: 10px 20px; }
-      .nav-links { display: none; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--cream); padding: 24px; gap: 20px; box-shadow: 0 10px 30px rgba(107,31,122,.1); }
-      .nav-links.open { display: flex; }
-      .hamburger { display: flex; }
-      .btn-pedir-nav { display: none; }
-      #hero { grid-template-columns: 1fr; padding: 100px 20px 60px; gap: 30px; }
-      .hero-visual { order: -1; }
-      .hero-bottle { width: 100%; max-width: 240px; height: 380px; margin: 0 auto; display: block; }
-      .hero-badge { right: 0; }
-      #historia, #porque, #contatos { grid-template-columns: 1fr; padding: 80px 20px; gap: 40px; }
-      .porque-img { order: 0; }
-      .porque-badge { right: 0; }
-      .img-frame img, .porque-img img, .contatos-photo img { height: 300px; }
-      .photo-badge { left: 0; }
-      #cardapio, #galeria { padding: 80px 20px; }
-      .galeria-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3,190px); }
-      .g-item:nth-child(1) { grid-column: 1/3; grid-row: 1; }
-      .g-item:nth-child(2) { grid-column: 1; grid-row: 2; }
-      .g-item:nth-child(3) { grid-column: 2; grid-row: 2; }
-      .g-item:nth-child(4) { grid-column: 1; grid-row: 3; }
-      .g-item:nth-child(5) { grid-column: 2; grid-row: 3; }
-      .g-item:nth-child(6) { display: none; }
-      footer { flex-direction: column; gap: 12px; text-align: center; padding: 28px 20px; }
-      body { cursor: auto; }
-      #cursor { display: none; }
-      .pb-txt { font-size: .78rem; font-weight: 600; color: var(--text-mid); line-height: 1.4; }
-      .pb-txt strong { display: block; color: var(--purple-dark); font-size: .92rem; }
-    }
+    /* ===== RESPONSIVIDADE COMPLETA — LOTUS AÇAÍ INDEX ===== */
+
+/* ---- 1400px+ (telas ultrawide) ---- */
+@media (min-width: 1400px) {
+  nav { padding: 14px 100px; }
+  nav.scrolled { padding: 10px 100px; }
+  #hero { padding: 140px 100px 100px; }
+  #historia, #porque, #contatos { padding: 140px 100px; gap: 100px; }
+  #cardapio, #galeria { padding: 140px 100px; }
+}
+
+/* ---- 1024px – 1200px (laptops menores) ---- */
+@media (max-width: 1200px) {
+  nav { padding: 14px 30px; }
+  nav.scrolled { padding: 10px 30px; }
+  #hero { padding: 110px 30px 70px; gap: 40px; }
+  #historia, #porque { padding: 100px 30px; gap: 60px; }
+  #contatos { padding: 80px 30px; gap: 60px; }
+  #cardapio, #galeria { padding: 100px 30px; }
+  footer { padding: 36px 30px; }
+}
+
+/* ---- 900px – 1024px (tablets landscape) ---- */
+@media (max-width: 1024px) and (min-width: 901px) {
+  nav { padding: 14px 24px; }
+  nav.scrolled { padding: 10px 24px; }
+  .nav-links { gap: 20px; }
+  .nav-links a { font-size: .75rem; }
+  #hero { padding: 110px 24px 70px; gap: 30px; }
+  .hero-title { font-size: clamp(2.8rem, 5vw, 4rem); }
+  .hero-bottle { width: 240px; height: 420px; }
+  .hero-badge { right: -16px; }
+  #historia, #porque { padding: 90px 24px; gap: 50px; }
+  #contatos { padding: 80px 24px; gap: 50px; }
+  #cardapio, #galeria { padding: 90px 24px; }
+  footer { padding: 36px 24px; }
+}
+
+/* ---- Mobile geral ≤ 900px ---- */
+@media (max-width: 900px) {
+  nav { padding: 12px 16px; }
+  nav.scrolled { padding: 10px 16px; }
+
+  .nav-links {
+    display: none; flex-direction: column;
+    position: absolute; top: 62px; left: 0; right: 0;
+    background: var(--cream); padding: 20px 16px;
+    gap: 16px; box-shadow: 0 10px 30px rgba(107,31,122,.12);
+    border-bottom: 2px solid rgba(216,123,219,.2);
+    z-index: 99;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { font-size: .9rem; padding: 6px 0; }
+  .hamburger { display: flex; }
+  .btn-pedir-nav { display: none; }
+
+  /* HERO */
+  #hero {
+    grid-template-columns: 1fr; padding: 90px 16px 50px;
+    gap: 24px; min-height: auto;
+  }
+  .hero-visual { order: -1; }
+  .hero-bottle { width: 100%; max-width: 200px; height: 320px; margin: 0 auto; display: block; }
+  .hero-badge { right: 0; bottom: 10px; padding: 10px 14px; gap: 8px; }
+  .hero-badge img { width: 30px; height: 30px; }
+  .hero-badge .badge-text { font-size: .7rem; }
+  .hero-badge .badge-text strong { font-size: .88rem; }
+  .hero-tag { font-size: .7rem; padding: 6px 14px; margin-bottom: 18px; }
+  .hero-title { font-size: clamp(2.4rem, 9vw, 3.5rem); }
+  .hero-sub { font-size: .95rem; margin-top: 14px; }
+  .hero-actions { flex-direction: column; gap: 10px; margin-top: 24px; }
+  .btn-primary, .btn-outline { padding: 14px 28px; font-size: .88rem; text-align: center; }
+  .scroll-ind { display: none; }
+  .hero-blob.b1 { width: 280px; height: 280px; }
+  .hero-blob.b2 { width: 200px; height: 200px; }
+
+  /* HISTORIA */
+  #historia { grid-template-columns: 1fr; padding: 60px 16px; gap: 32px; }
+  #historia::before { width: 120px; height: 120px; border-width: 30px; top: -30px; right: -30px; }
+  .img-frame img { height: 240px; transform: rotate(0); }
+  .img-frame::after { inset: -8px; }
+
+  /* PORQUE */
+  #porque { grid-template-columns: 1fr; padding: 60px 16px; gap: 32px; }
+  .porque-img { order: 0; }
+  .porque-img img { height: 240px; }
+  .porque-badge { right: 8px; top: 12px; padding: 10px 14px; font-size: .72rem; }
+  .porque-badge strong { font-size: 1.1rem; }
+  .porque-card { padding: 16px 18px; gap: 14px; }
+  .card-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+
+  /* CARDAPIO */
+  #cardapio { padding: 60px 16px; }
+  #cardapio .section-body { font-size: .92rem; }
+  .cardapio-btn { padding: 14px 32px; font-size: .88rem; }
+  .cdecor { font-size: 70px; }
+
+  /* GALERIA */
+  #galeria { padding: 60px 16px; }
+  #galeria .section-title { margin-bottom: 24px; }
+  .galeria-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 150px);
+    gap: 8px;
+  }
+  .g-item:nth-child(1) { grid-column: 1/3; grid-row: 1; }
+  .g-item:nth-child(2) { grid-column: 1;   grid-row: 2; }
+  .g-item:nth-child(3) { grid-column: 2;   grid-row: 2; }
+  .g-item:nth-child(4) { grid-column: 1;   grid-row: 3; }
+  .g-item:nth-child(5) { grid-column: 2;   grid-row: 3; }
+  .g-item:nth-child(6) { display: none; }
+  .g-item { border-radius: 12px; }
+
+  /* CONTATOS */
+  #contatos { grid-template-columns: 1fr; padding: 60px 16px; gap: 32px; }
+  .contatos-photo img { height: 240px; }
+  .photo-badge { left: 8px; bottom: 12px; padding: 10px 14px; gap: 8px; max-width: calc(100% - 16px); }
+  .photo-badge img { width: 28px; height: 28px; }
+  .pb-txt { font-size: .7rem; line-height: 1.3; }
+  .pb-txt strong { font-size: .82rem; }
+  .contact-card { padding: 16px 18px; gap: 14px; }
+  .cc-icon { width: 44px; height: 44px; font-size: 1.2rem; }
+  .cc-value { font-size: .95rem; }
+
+  /* FLOAT BTN */
+  .float-btn { bottom: 16px; right: 16px; padding: 12px 18px; font-size: .82rem; gap: 7px; }
+
+  /* FOOTER */
+  footer { flex-direction: column; gap: 10px; text-align: center; padding: 24px 16px; }
+
+  /* LIGHTBOX mobile */
+  .lb-btn { width: 38px; height: 38px; font-size: 1rem; }
+  .lb-prev { left: 6px; }
+  .lb-next { right: 6px; }
+  .lb-close { top: 8px; right: 8px; width: 34px; height: 34px; }
+
+  /* CURSOR off */
+  body { cursor: auto; }
+  #cursor { display: none; }
+
+  /* SECTION TITLES menores */
+  .section-title { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+  .section-label { font-size: .7rem; }
+  .section-body { font-size: .93rem; line-height: 1.75; }
+}
+
+/* ---- Celulares pequenos ≤ 480px ---- */
+@media (max-width: 480px) {
+  #hero { padding: 80px 14px 44px; }
+  .hero-title { font-size: clamp(2rem, 10vw, 2.8rem); }
+  .hero-bottle { max-width: 170px; height: 280px; }
+  .hero-actions { gap: 8px; }
+  .btn-primary, .btn-outline { padding: 13px 22px; font-size: .84rem; }
+
+  #historia, #porque, #contatos { padding: 50px 14px; gap: 28px; }
+  #cardapio, #galeria { padding: 50px 14px; }
+  footer { padding: 20px 14px; }
+
+  .galeria-grid { grid-template-rows: repeat(3, 130px); gap: 6px; }
+  .g-item { border-radius: 10px; }
+
+  .porque-card { padding: 14px 14px; }
+  .card-body h4 { font-size: .95rem; }
+  .card-body p { font-size: .82rem; }
+
+  .contact-card { padding: 14px 14px; gap: 12px; }
+  .cc-icon { width: 40px; height: 40px; border-radius: 12px; }
+
+  .float-btn { padding: 10px 14px; font-size: .78rem; bottom: 12px; right: 12px; }
+
+  .cardapio-btn { padding: 13px 24px; font-size: .84rem; width: 100%; justify-content: center; }
+}
+
+/* ---- Celulares muito pequenos ≤ 360px (Samsung Galaxy A, J, Moto G básico) ---- */
+@media (max-width: 360px) {
+  nav { padding: 10px 12px; }
+  .nav-logo span { font-size: .95rem; }
+  .nav-logo img { width: 32px; height: 32px; }
+
+  #hero { padding: 76px 12px 40px; }
+  .hero-title { font-size: clamp(1.8rem, 11vw, 2.4rem); }
+  .hero-bottle { max-width: 150px; height: 250px; }
+  .hero-tag { font-size: .65rem; padding: 5px 12px; }
+  .hero-sub { font-size: .87rem; }
+
+  #historia, #porque, #contatos { padding: 44px 12px; }
+  #cardapio, #galeria { padding: 44px 12px; }
+
+  .galeria-grid { grid-template-rows: repeat(3, 110px); }
+  .img-frame img, .porque-img img, .contatos-photo img { height: 200px; }
+
+  .porque-badge { position: static; margin-top: 10px; display: inline-block; }
+
+  footer { padding: 18px 12px; }
+  .footer-logo span { font-size: .95rem; }
+  .footer-copy { font-size: .75rem; }
+  .float-btn { padding: 9px 12px; font-size: .75rem; gap: 6px; }
+}
+
+/* ---- iPhone SE 1ª geração / telas ≤ 320px ---- */
+@media (max-width: 320px) {
+  .hero-title { font-size: 1.7rem; }
+  .hero-bottle { max-width: 130px; height: 220px; }
+  .section-title { font-size: 1.5rem; }
+  #historia, #porque, #contatos { padding: 38px 10px; }
+  #cardapio, #galeria { padding: 38px 10px; }
+  .galeria-grid { grid-template-rows: repeat(3, 95px); }
+}
+
     /* LIGHTBOX */
     .lightbox-overlay {
       position: fixed; inset: 0; z-index: 1000;

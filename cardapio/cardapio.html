@@ -293,6 +293,149 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
   white-space:nowrap;max-width:90vw;text-align:center;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===================================================
+   RETIRAR NO LOCAL — toggle entrega/retirada
+   =================================================== */
+.entrega-toggle {
+  display: flex; gap: 0; margin-bottom: 18px;
+  border: 2px solid var(--purple); border-radius: var(--radius); overflow: hidden;
+}
+.etoggle-btn {
+  flex: 1; padding: 12px 8px; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 700;
+  color: var(--purple); cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.etoggle-btn.active { background: var(--purple); color: #fff; }
+.etoggle-btn:first-child { border-right: 1px solid rgba(107,31,122,.3); }
+
+.retirada-info {
+  display: none; background: var(--lilac-pale);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  margin-bottom: 14px; border-left: 3px solid var(--purple);
+}
+.retirada-info.show { display: block; }
+.retirada-info p { font-size: .88rem; color: var(--text-mid); line-height: 1.7; }
+.retirada-info strong { color: var(--purple); display: block; font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+
+/* ===================================================
+   RESPONSIVIDADE COMPLETA CARDÁPIO
+   =================================================== */
+
+/* Telas muito pequenas ≤ 360px */
+@media (max-width: 360px) {
+  .header { padding: 10px 12px; gap: 8px; }
+  .header-logo span { font-size: .88rem; }
+  .header-logo img { height: 28px; width: 28px; }
+  .header-back { width: 32px; height: 32px; font-size: .88rem; }
+  .header-cart-btn { padding: 7px 10px; font-size: .75rem; }
+  .cart-count { width: 18px; height: 18px; font-size: .65rem; }
+
+  .hero-banner { padding: 18px 12px 16px; }
+  .hero-banner h1 { font-size: 1.45rem; }
+  .hero-banner p { font-size: .8rem; }
+
+  .tabs { padding: 10px 12px 0; gap: 6px; }
+  .tab-btn { padding: 7px 12px; font-size: .78rem; }
+
+  .section-title { padding: 14px 12px 8px; font-size: 1.05rem; }
+  .products-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 12px 6px; }
+  .product-img { height: 110px; }
+  .product-name { font-size: .78rem; }
+  .price-row { font-size: .72rem; }
+
+  .entrega-section, .totals-section, .cart-section { margin-left: 12px; margin-right: 12px; }
+  .field-group input, .field-group textarea { padding: 10px 12px; font-size: .85rem; }
+  .cust-footer { padding: 12px 12px; }
+
+  .fixed-bar { padding: 8px 12px; gap: 8px; }
+  .fixed-subtotal .value { font-size: .95rem; }
+  .btn-finalizar { padding: 12px; font-size: .82rem; }
+
+  .modal-box { padding: 20px 14px 28px; }
+  .modal-box h3 { font-size: 1rem; }
+  .modal-preview { font-size: .78rem; padding: 10px 12px; }
+  .btn-cancel, .btn-whatsapp { padding: 12px 8px; font-size: .82rem; }
+
+  .customizer { border-radius: 18px 18px 0 0; }
+  .customizer-header { padding: 14px 12px 10px; gap: 10px; }
+  .customizer-img { width: 58px; height: 58px; }
+  .customizer-meta h2 { font-size: .9rem; }
+  .cust-section { padding: 12px 12px 0; }
+  .size-btn { padding: 10px 6px; }
+  .size-btn .sz-label { font-size: .85rem; }
+  .size-btn .sz-price { font-size: .75rem; }
+  .adicional-name { font-size: .82rem; }
+  .adicional-price { font-size: .7rem; }
+  .qty-btn { width: 28px; height: 28px; font-size: 1rem; }
+
+  .toast { font-size: .78rem; padding: 8px 16px; top: 60px; }
+}
+
+/* Celulares padrão ≤ 480px */
+@media (max-width: 480px) {
+  .header { padding: 10px 14px; gap: 10px; }
+  .hero-banner { padding: 20px 14px 18px; }
+  .hero-banner h1 { font-size: 1.6rem; }
+  .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 14px 8px; }
+  .product-img { height: 120px; }
+  .product-info { padding: 8px 8px 10px; }
+  .product-name { font-size: .8rem; }
+  .price-row { font-size: .74rem; }
+  .entrega-section, .totals-section, .cart-section { margin-left: 14px; margin-right: 14px; }
+  .customizer-header { gap: 10px; }
+}
+
+/* Tablets ≥ 600px */
+@media (min-width: 600px) {
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .hero-banner { padding: 32px 24px 28px; }
+  .hero-banner h1 { font-size: 2.2rem; }
+  .tabs { padding: 16px 24px 0; }
+  .section-title { padding: 20px 24px 12px; }
+  .products-grid { padding: 0 24px 10px; }
+  .entrega-section, .totals-section, .cart-section { margin: 0 24px 14px; }
+  .entrega-section { margin-top: 0; }
+  .fixed-bar { padding: 12px 24px; }
+}
+
+/* Tablets maiores / desktop ≥ 768px */
+@media (min-width: 768px) {
+  body { padding-bottom: 100px; }
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .product-img { height: 160px; }
+  .hero-banner h1 { font-size: 2.4rem; }
+  .hero-banner p { font-size: .95rem; }
+
+  .customizer {
+    max-width: 480px; left: 50%; right: auto;
+    transform: translateX(-50%) translateY(100%);
+    border-radius: 24px 24px 0 0;
+  }
+  .customizer.open { transform: translateX(-50%) translateY(0); }
+
+  .modal-overlay { align-items: center; }
+  .modal-box {
+    border-radius: 24px; max-width: 480px; width: 100%;
+    transform: scale(.9); margin: auto;
+  }
+  .modal-overlay.open .modal-box { transform: scale(1); }
+
+  .fixed-bar { max-width: 768px; margin: 0 auto; left: 0; right: 0; }
+}
+
+/* Garantir que touch targets sejam grandes o suficiente */
+@media (pointer: coarse) {
+  .qty-btn { min-width: 40px; min-height: 40px; }
+  .tab-btn { min-height: 40px; }
+  .btn-cep { min-height: 44px; }
+  .header-back { min-width: 42px; min-height: 42px; }
+  .cart-item-remove { padding: 8px; }
+  .size-btn { min-height: 52px; }
+}
+
 </style>
 </head>
 <body>
@@ -335,8 +478,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 
 <!-- ENTREGA -->
 <div class="entrega-section" id="entregaSection" style="display:none">
-  <h3>Dados da Entrega</h3>
+  <h3>Dados do Pedido</h3>
 
+  <!-- TOGGLE ENTREGA / RETIRADA -->
+  <div class="entrega-toggle" style="margin-bottom:16px">
+    <button class="etoggle-btn active" id="btnEntrega" onclick="setModoEntrega('entrega')">
+      🛵 Entrega
+    </button>
+    <button class="etoggle-btn" id="btnRetirada" onclick="setModoEntrega('retirada')">
+      🏠 Retirar no Local
+    </button>
+  </div>
+
+  <!-- Info retirada -->
+  <div class="retirada-info" id="retiradaInfo">
+    <strong>📍 Retirada no Local</strong>
+    <p>Você retira direto na nossa loja! Após confirmar o pedido, combinaremos o horário de retirada pelo WhatsApp. Sem taxa de entrega! 🎉</p>
+  </div>
+
+  <div id="entregaFields">
   <!-- Nome -->
   <div class="field-group">
     <label>Nome de quem vai receber</label>
@@ -396,6 +556,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
     </div>
     <div class="frete-error" id="freteError"></div>
   </div>
+
+  </div><!-- end entregaFields -->
 
   <!-- Observações -->
   <div class="field-group" style="margin-top:12px">
@@ -766,10 +928,11 @@ function updateCartUI() {
   const subtotal   = cart.reduce((s, i) => s + i.totalPrice, 0);
   const grandTotal = subtotal + freteValor;
   document.getElementById('subtotalText').textContent = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
-  document.getElementById('freteText').textContent    = 'R$ ' + freteValor.toFixed(2).replace('.', ',');
-  document.getElementById('totalText').textContent    = 'R$ ' + grandTotal.toFixed(2).replace('.', ',');
-  document.getElementById('fixedTotal').textContent   = 'R$ ' + grandTotal.toFixed(2).replace('.', ',');
-  document.getElementById('btnFinalizar').disabled    = !hasItems;
+  document.getElementById('freteText').textContent    = modoEntrega === 'retirada' ? 'Grátis' : 'R$ ' + freteValor.toFixed(2).replace('.', ',');
+  document.getElementById('totalText').textContent    = 'R$ ' + (modoEntrega === 'retirada' ? subtotal : grandTotal).toFixed(2).replace('.', ',');
+  const displayTotal = modoEntrega === 'retirada' ? subtotal : grandTotal;
+  document.getElementById('fixedTotal').textContent   = 'R$ ' + displayTotal.toFixed(2).replace('.', ',');
+  document.getElementById('btnFinalizar').disabled    = !hasItems || (modoEntrega === 'entrega' && !freteOk);
 }
 
 /* ============================================================
@@ -959,20 +1122,22 @@ function openConfirm() {
     document.getElementById('nomeInput').focus();
     return;
   }
-  if (!cepData) {
-    showToast('Busque seu CEP antes de finalizar');
-    document.getElementById('cepInput').scrollIntoView({ behavior:'smooth', block:'center' });
-    return;
-  }
-  if (!document.getElementById('numeroInput').value.trim()) {
-    showToast('Informe o número da casa');
-    document.getElementById('numeroInput').focus();
-    return;
-  }
-  if (!freteOk) {
-    showToast('Calcule o frete antes de finalizar');
-    document.getElementById('btnFrete').scrollIntoView({ behavior:'smooth', block:'center' });
-    return;
+  if (modoEntrega === 'entrega') {
+    if (!cepData) {
+      showToast('Busque seu CEP antes de finalizar');
+      document.getElementById('cepInput').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    if (!document.getElementById('numeroInput').value.trim()) {
+      showToast('Informe o número da casa');
+      document.getElementById('numeroInput').focus();
+      return;
+    }
+    if (!freteOk) {
+      showToast('Calcule o frete antes de finalizar');
+      document.getElementById('btnFrete').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
   }
 
   document.getElementById('msgPreview').textContent = buildMessage();
@@ -991,15 +1156,6 @@ function buildMessage() {
   const subtotal   = cart.reduce((s, i) => s + i.totalPrice, 0);
   const total      = subtotal + freteValor;
 
-  // Montar endereço completo
-  const endFull = [
-    cepData.logradouro + (numero ? ', ' + numero : ''),
-    compl,
-    cepData.bairro,
-    cepData.localidade + '/' + cepData.uf,
-    'CEP ' + (cepData.cep || '')
-  ].filter(Boolean).join(' - ');
-
   let msg = 'Ola! Quero fazer um pedido:\n\n';
   msg += '--- ITENS ---\n';
   cart.forEach((item, i) => {
@@ -1009,14 +1165,35 @@ function buildMessage() {
     msg += `   Valor: R$ ${item.totalPrice.toFixed(2).replace('.', ',')}\n`;
   });
 
-  msg += '\n--- ENTREGA ---\n';
-  msg += `Recebedor: ${nome}\n`;
-  msg += `Endereco: ${endFull}\n`;
+  if (modoEntrega === 'retirada') {
+    msg += '\n--- RETIRADA NO LOCAL ---\n';
+    msg += `Nome: ${nome}\n`;
+    msg += 'Modalidade: Retirada no local (sem frete)\n';
+    msg += '\n--- VALORES ---\n';
+    msg += `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+    msg += `Frete: Gratis (retirada)\n`;
+    msg += `TOTAL: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+  } else {
+    // Montar endereço completo
+    const numero = document.getElementById('numeroInput').value.trim();
+    const compl  = document.getElementById('complementoInput').value.trim();
+    const endFull = [
+      cepData.logradouro + (numero ? ', ' + numero : ''),
+      compl,
+      cepData.bairro,
+      cepData.localidade + '/' + cepData.uf,
+      'CEP ' + (cepData.cep || '')
+    ].filter(Boolean).join(' - ');
 
-  msg += '\n--- VALORES ---\n';
-  msg += `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-  msg += `Frete: R$ ${freteValor.toFixed(2).replace('.', ',')}\n`;
-  msg += `TOTAL: R$ ${total.toFixed(2).replace('.', ',')}\n`;
+    msg += '\n--- ENTREGA ---\n';
+    msg += `Recebedor: ${nome}\n`;
+    msg += `Endereco: ${endFull}\n`;
+
+    msg += '\n--- VALORES ---\n';
+    msg += `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+    msg += `Frete: R$ ${freteValor.toFixed(2).replace('.', ',')}\n`;
+    msg += `TOTAL: R$ ${total.toFixed(2).replace('.', ',')}\n`;
+  }
 
   if (obs) msg += `\nObs: ${obs}\n`;
 
@@ -1037,6 +1214,31 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ============================================================
+   MODO ENTREGA / RETIRADA
+   ============================================================ */
+let modoEntrega = 'entrega'; // 'entrega' | 'retirada'
+
+function setModoEntrega(modo) {
+  modoEntrega = modo;
+  const isEntrega = modo === 'entrega';
+
+  document.getElementById('btnEntrega').classList.toggle('active', isEntrega);
+  document.getElementById('btnRetirada').classList.toggle('active', !isEntrega);
+  document.getElementById('retiradaInfo').classList.toggle('show', !isEntrega);
+  document.getElementById('entregaFields').style.display = isEntrega ? 'block' : 'none';
+
+  // Reset frete ao trocar modo
+  if (!isEntrega) {
+    freteValor = 0;
+    freteOk = true; // sem necessidade de frete na retirada
+  } else {
+    freteOk = false;
+    freteValor = 0;
+  }
+  updateCartUI();
 }
 
 /* ============================================================
