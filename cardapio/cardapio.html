@@ -978,7 +978,17 @@ async function buscarCep() {
   label.innerHTML = '<span class="spin"></span> Buscando...';
 
   try {
-    const res  = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    // ✅ Buscar dados do CEP com timeout
+    const controller1 = new AbortController();
+    const timeoutId1 = setTimeout(() => controller1.abort(), 8000);
+
+    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`, { signal: controller1.signal });
+    clearTimeout(timeoutId1);
+
+    if (!res.ok) {
+      throw new Error(`API viaCEP respondeu com erro (${res.status})`);
+    }
+
     const data = await res.json();
 
     if (data.erro) {
@@ -1001,23 +1011,62 @@ async function buscarCep() {
     `;
     document.getElementById('cepResult').classList.add('show');
 
-    // Geocodificar para obter lat/lng (para cálculo de frete)
-    const query      = `${rua}, ${bairro}, ${cidade}, ${uf}, Brasil`;
-    const geoRes     = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-      { headers: { 'Accept-Language': 'pt-BR' } }
-    );
-    const geoData    = await geoRes.json();
+    // ✅ Geocodificar com timeout e User-Agent
+    const query = `${rua}, ${cidade}, ${uf}, Brasil`;
+    
+    const controller2 = new AbortController();
+    const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
 
-    cepData = {
-      logradouro: rua,
-      bairro,
-      localidade: cidade,
-      uf,
-      cep: data.cep,
-      lat: geoData[0] ? parseFloat(geoData[0].lat) : null,
-      lng: geoData[0] ? parseFloat(geoData[0].lon) : null
-    };
+    const geoRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+      { 
+        signal: controller2.signal,
+        headers: { 
+          'Accept-Language': 'pt-BR',
+          'User-Agent': 'LotusAcaiApp/1.0'
+        } 
+      }
+    );
+    clearTimeout(timeoutId2);
+
+    if (!geoRes.ok) {
+      console.warn('Nominatim respondeu com erro, usando fallback');
+      cepData = {
+        logradouro: rua,
+        bairro,
+        localidade: cidade,
+        uf,
+        cep: data.cep,
+        lat: null,
+        lng: null
+      };
+    } else {
+      const geoData = await geoRes.json();
+
+      // ✅ Validar resposta do Nominatim
+      if (!geoData || !Array.isArray(geoData) || geoData.length === 0) {
+        console.warn('Nominatim não encontrou o endereço, usando fallback');
+        cepData = {
+          logradouro: rua,
+          bairro,
+          localidade: cidade,
+          uf,
+          cep: data.cep,
+          lat: null,
+          lng: null
+        };
+      } else {
+        cepData = {
+          logradouro: rua,
+          bairro,
+          localidade: cidade,
+          uf,
+          cep: data.cep,
+          lat: parseFloat(geoData[0].lat),
+          lng: parseFloat(geoData[0].lon)
+        };
+      }
+    }
 
     // Mostrar seção de número
     document.getElementById('numeroSection').style.display = 'block';
@@ -1030,7 +1079,19 @@ async function buscarCep() {
     setTimeout(() => document.getElementById('numeroInput').focus(), 200);
 
   } catch (e) {
-    showToast('Erro ao buscar CEP. Verifique sua conexão.');
+    console.error('Erro ao buscar CEP:', e);
+    
+    let mensagem = 'Erro ao buscar CEP. ';
+    
+    if (e.name === 'AbortError') {
+      mensagem = 'A requisição demorou muito. Verifique sua conexão de internet.';
+    } else if (!navigator.onLine) {
+      mensagem = 'Sem conexão com a internet.';
+    } else {
+      mensagem += 'Tente novamente ou verifique sua conexão.';
+    }
+    
+    showToast(mensagem);
   }
 
   btn.disabled  = false;
@@ -1068,23 +1129,48 @@ async function calcularFrete() {
     let lat = cepData.lat;
     let lng = cepData.lng;
 
-    // Se não temos coords do geocode, tentar buscar com número
+    // ✅ Se não temos coords, tentar buscar com número
     if (!lat || !lng) {
-      const num    = document.getElementById('numeroInput').value.trim();
-      const query  = `${cepData.logradouro} ${num}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brasil`;
+      const num = document.getElementById('numeroInput').value.trim();
+      if (!num) {
+        throw new Error('Informe o número para prosseguir.');
+      }
+
+      const query = `${cepData.logradouro} ${num}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brasil`;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
       const geoRes = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'pt-BR' } }
+        { 
+          signal: controller.signal,
+          headers: { 
+            'Accept-Language': 'pt-BR',
+            'User-Agent': 'LotusAcaiApp/1.0'
+          }
+        }
       );
-      const geoData = await geoRes.json();
-      if (geoData[0]) {
-        lat = parseFloat(geoData[0].lat);
-        lng = parseFloat(geoData[0].lon);
+      clearTimeout(timeoutId);
+
+      if (!geoRes.ok) {
+        throw new Error('Não foi possível localizar o endereço. Verifique os dados.');
       }
+
+      const geoData = await geoRes.json();
+      
+      // ✅ Validar resposta
+      if (!geoData || !Array.isArray(geoData) || geoData.length === 0) {
+        throw new Error('Endereço não encontrado. Verifique o CEP e número.');
+      }
+
+      lat = parseFloat(geoData[0].lat);
+      lng = parseFloat(geoData[0].lon);
     }
 
-    if (!lat || !lng) {
-      throw new Error('Não foi possível localizar o endereço. Verifique o CEP e número.');
+    // ✅ Validar coordenadas finais
+    if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+      throw new Error('Não foi possível localizar o endereço. Tente novamente.');
     }
 
     const dist     = haversine(storeCoords.lat, storeCoords.lng, lat, lng);
@@ -1103,8 +1189,16 @@ async function calcularFrete() {
     updateCartUI();
 
   } catch (e) {
+    console.error('Erro ao calcular frete:', e);
+    
     const errEl = document.getElementById('freteError');
-    errEl.textContent = e.message || 'Erro ao calcular frete. Tente novamente.';
+    let mensagem = e.message || 'Erro ao calcular frete. Tente novamente.';
+    
+    if (e.name === 'AbortError') {
+      mensagem = 'Requisição demorou muito. Tente novamente.';
+    }
+    
+    errEl.textContent = mensagem;
     errEl.classList.add('show');
     freteOk    = false;
     freteValor = 0;
